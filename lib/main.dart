@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_eval/note.dart';
 import 'package:intl/intl.dart';
-import 'package:lorem_ipsum/lorem_ipsum.dart';
+import 'package:flutter_lorem/flutter_lorem.dart';
 
 void main() {
   runApp(const MyApp());
@@ -118,6 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   texte: contenuController.text,
                                   image:
                                       'https://i.ibb.co/NVW6wCy/unknown.png')),
+                              titreController.clear(),
+                              contenuController.clear(),
                             }),
                         style: ElevatedButton.styleFrom(
                           primary: const Color.fromARGB(255, 102, 105, 102),
@@ -143,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       shrinkWrap: true,
                       itemCount: notes.length,
                       itemBuilder: (context, index) =>
-                          NoteWidget(note: notes[index], context: context),
+                          NotePage(note: notes[index]),
                     ),
                   ]),
             ),
@@ -159,11 +161,12 @@ List<Note> initnote() {
   while(notes.length < 3)
   {
       notes.add(Note(
-      titre: loremIpsum(
+      titre: lorem(
         words: 4,
+        paragraphs: 1
       ),
       date: getCurrentDate(),
-      texte: loremIpsum(words: 60, paragraphs: 1, initWithLorem: true),
+      texte: lorem(words: 60, paragraphs: 1),
       image: 'https://i.ibb.co/NVW6wCy/unknown.png'));
   }
   return notes;
