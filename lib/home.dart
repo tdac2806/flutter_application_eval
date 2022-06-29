@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_eval/note.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
+import 'package:flutter_application_eval/repository/noterepository.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -9,10 +10,20 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
+
+NoteRepository noteRepository = NoteRepository();
+
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController titreController = TextEditingController();
   TextEditingController contenuController = TextEditingController();
-  List<Note> notes = initnote();
+
+  List<Note> notes = [];
+
+  @override
+  void initState() {
+    initnote();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,13 +100,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   Container(
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                       child: ElevatedButton(
-                        onPressed: () => setState(() => {
-                              notes.add(Note(
-                                  titre: titreController.text,
-                                  date: getCurrentDate(),
-                                  texte: contenuController.text,
-                                  image:
-                                      'https://i.ibb.co/NVW6wCy/unknown.png')),
+                        onPressed: (() => {
+                              noteRepository
+                                  .addNote(Note(
+                                      titre: titreController.text,
+                                      date: getCurrentDate(),
+                                      texte: contenuController.text,
+                                      image:
+                                          'https://i.ibb.co/NVW6wCy/unknown.png'))
+                                  .then((value) => addnote(value)),
                               titreController.clear(),
                               contenuController.clear(),
                             }),
@@ -132,25 +145,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-}
 
-List<Note> initnote() {
-  List<Note> notes = [];
-  while(notes.length < 3)
-  {
-      notes.add(Note(
-      titre: lorem(
-        words: 4,
-        paragraphs: 1
-      ),
-      date: getCurrentDate(),
-      texte: lorem(words: 60, paragraphs: 1),
-      image: 'https://i.ibb.co/NVW6wCy/unknown.png'));
+  initnote() async {
+    notes = await noteRepository.getAllNotes();
+    setState(() {});
+    return;
   }
-  return notes;
-}
 
-String getCurrentDate() {
-  DateTime now = DateTime.now();
-  return DateFormat('dd/MM/yyyy').format(now);
+  addnote(Note note) {
+    notes.add(note);
+    setState(() {});
+    return;
+  }
+
+  String getCurrentDate() {
+    DateTime now = DateTime.now();
+    return DateFormat('dd/MM/yyyy').format(now);
+  }
 }

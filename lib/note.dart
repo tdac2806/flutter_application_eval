@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_eval/app_routes.dart';
-import 'package:flutter_application_eval/ecran_details.dart';
 
 class Note {
   final String titre;
@@ -8,11 +7,28 @@ class Note {
   final String texte;
   final String image;
 
-  Note(
-      {required this.titre,
+  Note({
+      required this.titre,
       required this.date,
       required this.texte,
       required this.image});
+
+  factory Note.fromJson(Map<String, dynamic> json) {
+    String titre = json['titre'];
+    String date  = json['date'];
+    String texte = json['texte'];
+    String image = json['image'];
+    return Note(titre: titre, date: date, texte: texte, image: image);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'titre': titre,
+      'date': date,
+      'texte': texte,
+      'image': image,
+    };
+  }
 }
 
 class NotePage extends StatelessWidget {
