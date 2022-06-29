@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_eval/app_routes.dart';
 import 'package:flutter_application_eval/ecran_details.dart';
 
 class Note {
@@ -27,15 +28,8 @@ class NotePage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: InkWell(
         child: noteWidget(note: note),
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailsPage(
-              note: note,
-            ),
-          ),
-        ),
-      ),
+        onTap: () =>
+              Navigator.pushNamed(context, details, arguments: note)),
     );
   }
 }
