@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_eval/app_routes.dart';
 
@@ -7,15 +9,15 @@ class Note {
   final String texte;
   final String image;
 
-  Note({
-      required this.titre,
+  Note(
+      {required this.titre,
       required this.date,
       required this.texte,
       required this.image});
 
   factory Note.fromJson(Map<String, dynamic> json) {
     String titre = json['titre'];
-    String date  = json['date'];
+    String date = json['date'];
     String texte = json['texte'];
     String image = json['image'];
     return Note(titre: titre, date: date, texte: texte, image: image);
@@ -43,9 +45,8 @@ class NotePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: InkWell(
-        child: noteWidget(note: note),
-        onTap: () =>
-              Navigator.pushNamed(context, details, arguments: note)),
+          child: noteWidget(note: note),
+          onTap: () => Navigator.pushNamed(context, details, arguments: note)),
     );
   }
 }
@@ -69,7 +70,9 @@ Column noteWidget({required Note note}) => Column(
         Text(note.texte),
         Align(
           alignment: Alignment.bottomCenter,
-          child: Image.network(note.image),
+          child: note.image.isNotEmpty
+              ? Image.file(File(note.image))
+              : Image.network("https://i.ibb.co/NVW6wCy/unknown.png"),
         ),
         const Divider(
           color: Colors.black,

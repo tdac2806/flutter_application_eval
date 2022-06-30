@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_eval/note.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:flutter_application_eval/repository/noterepository.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -16,8 +18,10 @@ NoteRepository noteRepository = NoteRepository();
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController titreController = TextEditingController();
   TextEditingController contenuController = TextEditingController();
+  ImagePicker imagePicker = ImagePicker();
 
   List<Note> notes = [];
+  List<XFile> images = [];
 
   @override
   void initState() {
@@ -82,21 +86,37 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
-                  Container(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Respond to button press
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: const Color.fromARGB(255, 102, 105, 102),
-                          onPrimary: Colors.white,
-                          shadowColor: const Color.fromARGB(255, 0, 0, 0),
-                          elevation: 3,
-                          minimumSize: const Size(100, 40),
-                        ),
-                        child: const Text('Ajouter une image'),
-                      )),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              camera();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: const Color.fromARGB(255, 102, 105, 102),
+                              onPrimary: Colors.white,
+                              shadowColor: const Color.fromARGB(255, 0, 0, 0),
+                              elevation: 3,
+                              minimumSize: const Size(100, 40),
+                            ),
+                            child: const Text('Ajouter une image'),
+                          )),
+                      images.isNotEmpty
+                          ? Container(
+                              width: MediaQuery.of(context).size.width / 5,
+                              height: MediaQuery.of(context).size.width / 5,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: Image.file(File(images[0].path)).image,
+                                ),
+                              ),
+                            )
+                          : Container(),
+                    ],
+                  ),
                   Container(
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                       child: ElevatedButton(
@@ -106,11 +126,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                       titre: titreController.text,
                                       date: getCurrentDate(),
                                       texte: contenuController.text,
-                                      image:
-                                          'https://i.ibb.co/NVW6wCy/unknown.png'))
+                                      image: images.isNotEmpty
+                                          ? images[0].path
+                                          : ""))
                                   .then((value) => addnote(value)),
                               titreController.clear(),
                               contenuController.clear(),
+                              images.clear(),
                             }),
                         style: ElevatedButton.styleFrom(
                           primary: const Color.fromARGB(255, 102, 105, 102),
@@ -161,5 +183,14 @@ class _MyHomePageState extends State<MyHomePage> {
   String getCurrentDate() {
     DateTime now = DateTime.now();
     return DateFormat('dd/MM/yyyy').format(now);
+  }
+
+  camera() async {
+    images.clear();
+    var img = await imagePicker.pickImage(source: ImageSource.camera);
+    if (img != null) {
+      images.add(img);
+    }
+    setState(() {});
   }
 }
